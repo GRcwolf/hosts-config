@@ -8,10 +8,12 @@ type host struct {
 	user string
 }
 
+// Creates a new host struct.
 func newHost(name string, hostName string, user string) *host {
 	return &host{name: name, hostName: hostName, user: user}
 }
 
+// Gets an array of string containing the single config lines.
 func (h *host) getWritableHost() []string {
 	writableLines := []string{
 		fmt.Sprintf("Host %s", h.name),

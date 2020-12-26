@@ -7,16 +7,27 @@ import (
 	"os/user"
 )
 
+// Writes thr host to the config file.
 func writeHostToConfig(h *host) {
+	// Load the current user.
 	u, err := user.Current()
 	if err != nil {
 		log.Fatalf("Couldn't get current user: %s", err.Error())
 		return
 	}
-	file, _ := os.OpenFile(u.HomeDir + "/.ssh/config", os.O_APPEND|os.O_WRONLY, 0774)
+	// Open file in order to later append the host.
+	file, err := os.OpenFile(u.HomeDir + "/.ssh/config", os.O_APPEND|os.O_WRONLY, 0774)
+	if err != nil {
+		log.Fatalf("Couldn't open file: %s", err.Error())
+		return
+	}
+	// Make sure the file will be closed.
+	defer closeFile(file)
 	writer := bufio.NewWriter(file)
+	// Get the lines to write.
 	linesToWrite := h.getWritableHost()
 	for _, line := range linesToWrite {
+		// Write each line.
 		_, err = writer.WriteString(line + "\n")
 		if err != nil {
 			log.Fatalf("Couldn't write to file: %s", err.Error())
@@ -25,5 +36,13 @@ func writeHostToConfig(h *host) {
 	err = writer.Flush()
 	if err != nil {
 		log.Fatalf("Couldn't flush writer: %s", err.Error())
+	}
+}
+
+// Closes the os.File that is passes as parameter and shows an error if this isn't possible.
+func closeFile(file *os.File)  {
+	err := file.Close()
+	if err != nil {
+		log.Fatalf("Couldn't close file: %s", err.Error())
 	}
 }

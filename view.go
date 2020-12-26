@@ -1,9 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
+// Get the host's name from the user.
 func getHostNameFromUser() string {
 	hostName := ""
 	var err error
@@ -18,6 +17,7 @@ func getHostNameFromUser() string {
 	return hostName
 }
 
+// Get the host's user from the user.
 func getUserFromUser() string {
 	user := ""
 	var err error
@@ -32,6 +32,7 @@ func getUserFromUser() string {
 	return user
 }
 
+// Get the host's name from the user.
 func getConfigName() string {
 	configName := ""
 	var err error
@@ -46,6 +47,7 @@ func getConfigName() string {
 	return configName
 }
 
+// Gets all host information from the user and returns the host.
 func getHostFromUser() *host {
 	configName := getConfigName()
 	hostName := getHostNameFromUser()
