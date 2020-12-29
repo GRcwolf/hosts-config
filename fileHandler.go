@@ -16,7 +16,7 @@ func writeHostToConfig(h *host) {
 		return
 	}
 	// Open file in order to later append the host.
-	file, err := os.OpenFile(u.HomeDir+"/.ssh/config", os.O_APPEND|os.O_WRONLY, 0774)
+	file, err := os.OpenFile(u.HomeDir+"/.ssh/config_test", os.O_APPEND|os.O_WRONLY, 0774)
 	if err != nil {
 		log.Fatalf("Couldn't open file: %s", err.Error())
 		return
@@ -26,7 +26,8 @@ func writeHostToConfig(h *host) {
 	writer := bufio.NewWriter(file)
 	// Get the lines to write.
 	linesToWrite := h.getWritableHost()
-	for _, line := range linesToWrite {
+	for i := 0; i < len(linesToWrite); i++ {
+		line := linesToWrite[i]
 		// Write each line.
 		_, err = writer.WriteString(line + "\n")
 		if err != nil {
@@ -60,7 +61,7 @@ func getFileContent() (map[int]string, error) {
 	}
 	defer closeFile(file)
 	reader := bufio.NewScanner(file)
-	var lines map[int]string
+	var lines = make(map[int]string)
 	for reader.Scan() {
 		lines[len(lines)] = reader.Text()
 	}

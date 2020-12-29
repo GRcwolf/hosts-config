@@ -19,41 +19,55 @@ func newHost(name string, hostName string, user string) *host {
 }
 
 // Gets an array of string containing the single config lines.
-func (h *host) getWritableHost() []string {
-	writableLines := []string{
-		fmt.Sprintf("Host %s", h.name),
-		fmt.Sprintf("\tHostName %s", h.hostName),
-		fmt.Sprintf("\tUser %s", h.user),
-		"",
+func (h *host) getWritableHost() map[int]string {
+	var writableLines = make(map[int]string)
+	writableLines[len(writableLines)] = fmt.Sprintf("Host %s", h.name)
+	if h.hostName != "" {
+		writableLines[len(writableLines)] = fmt.Sprintf("\tHostName %s", h.hostName)
 	}
+	if h.user != "" {
+		writableLines[len(writableLines)] = fmt.Sprintf("\tUser %s", h.user)
+	}
+	for name, value := range h.additionalOptions {
+		writableLines[len(writableLines)] = fmt.Sprintf("\t%s %s", name, value)
+	}
+	writableLines[len(writableLines)] = ""
 	return writableLines
 }
 
-func getAllHosts() map[string]*host {
+func getAllHosts() map[int]*host {
 	fileContent, err := getFileContent()
 	if err != nil {
 		log.Fatalf("Error geting the file content: %s", err.Error())
+		return nil
 	}
-	var hostList map[string]*host
+	var hostList = make(map[int]*host)
 	var h *host
-	nameRegex := regexp.MustCompile("(?<=Host\s)\w+")
-	optionRegex := regexp.MustCompile("(?<=\s)\w+")
-	for _, lineValue := range fileContent {
-		if result, _ := regexp.MatchString("(?<=Host\s)\w+"); result {
+	nameRegex := regexp.MustCompile("Host\\s+\\S+")
+	nameRegexReplace := regexp.MustCompile("Host\\s+")
+	optionRegex := regexp.MustCompile("\\s+\\S+")
+	optionRegexReplace := regexp.MustCompile("\\s+")
+	for i := 0; i < len(fileContent); i++ {
+		lineValue := fileContent[i]
+		if result, _ := regexp.MatchString("Host\\s+\\S+", lineValue); result {
 			if h != nil {
-				hostList[h.name] = h
+				hostList[len(hostList)] = h
 			}
-			h = host{}
-			h.name = nameRegex.FindString(lineValue)
-		}
-		else if result, _ := regexp.MatchString("^\s+\w+\s+\w+\s*$"); result {
-			results := optionRegex.FindAllString()
+			h = &host{}
+			h.additionalOptions = make(map[string]string)
+			name := nameRegex.FindString(lineValue)
+			h.name = nameRegexReplace.ReplaceAllString(name, "")
+		} else if result, _ := regexp.MatchString("^\\s+\\w+\\s+\\S+$", lineValue); result {
+			results := optionRegex.FindAllString(lineValue, -1)
 			if len(results) == 2 {
-				optionName := results[0]
-				optionValue := results[1]
+				optionName := optionRegexReplace.ReplaceAllString(results[0], "")
+				optionValue := optionRegexReplace.ReplaceAllString(results[1], "")
 				h.additionalOptions[optionName] = optionValue
 			}
 		}
+	}
+	if h != nil {
+		hostList[len(hostList)] = h
 	}
 	return hostList
 }
