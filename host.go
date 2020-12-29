@@ -35,13 +35,13 @@ func (h *host) getWritableHost() map[int]string {
 	return writableLines
 }
 
-func getAllHosts() map[int]*host {
+func getAllHosts() map[string]*host {
 	fileContent, err := getFileContent()
 	if err != nil {
 		log.Fatalf("Error geting the file content: %s", err.Error())
 		return nil
 	}
-	var hostList = make(map[int]*host)
+	var hostList = make(map[string]*host)
 	var h *host
 	nameRegex := regexp.MustCompile("Host\\s+\\S+")
 	nameRegexReplace := regexp.MustCompile("Host\\s+")
@@ -51,7 +51,7 @@ func getAllHosts() map[int]*host {
 		lineValue := fileContent[i]
 		if result, _ := regexp.MatchString("Host\\s+\\S+", lineValue); result {
 			if h != nil {
-				hostList[len(hostList)] = h
+				hostList[h.name] = h
 			}
 			h = &host{}
 			h.additionalOptions = make(map[string]string)
@@ -67,7 +67,7 @@ func getAllHosts() map[int]*host {
 		}
 	}
 	if h != nil {
-		hostList[len(hostList)] = h
+		hostList[h.name] = h
 	}
 	return hostList
 }
