@@ -1,8 +1,15 @@
 package main
 
+import "os"
+
 func main() {
-	// Get a host from the user.
-	h := getHostFromUser()
-	// Write the host to the config file.
-	writeHostToConfig(h)
+	argumnets := os.Args
+	if len(argumnets) > 1 && argumnets[1] != "create" {
+
+	} else {
+		// Get a host from the user.
+		h := getHostFromUser()
+		// Write the host to the config file.
+		writeHostToConfig(h)
+	}
 }
