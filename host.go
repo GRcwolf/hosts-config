@@ -35,7 +35,9 @@ func (h *host) getWritableHost() map[int]string {
 	return writableLines
 }
 
+// Gets all hosts from the cofig file.
 func getAllHosts() map[string]*host {
+	// Get the lines of the file.
 	fileContent, err := getFileContent()
 	if err != nil {
 		log.Fatalf("Error geting the file content: %s", err.Error())
@@ -43,22 +45,34 @@ func getAllHosts() map[string]*host {
 	}
 	var hostList = make(map[string]*host)
 	var h *host
+	// Regex to check for host line.
 	nameRegex := regexp.MustCompile("Host\\s+\\S+")
+	// Regex to replace the host line.
 	nameRegexReplace := regexp.MustCompile("Host\\s+")
+	// Regex for any host option.
 	optionRegex := regexp.MustCompile("\\s+\\S+")
+	// Replace regex for the host options.
 	optionRegexReplace := regexp.MustCompile("\\s+")
+	// Iterate through the lines in the correct order.
 	for i := 0; i < len(fileContent); i++ {
 		lineValue := fileContent[i]
+		// Check if the line contains a host.
 		if result, _ := regexp.MatchString("Host\\s+\\S+", lineValue); result {
 			if h != nil {
+				// Add the current host to the list.
 				hostList[h.name] = h
 			}
+			// Create a new host.
 			h = &host{}
+			// Initiate the additional parameters.
 			h.additionalOptions = make(map[string]string)
 			name := nameRegex.FindString(lineValue)
+			// Clean up the name.
 			h.name = nameRegexReplace.ReplaceAllString(name, "")
 		} else if result, _ := regexp.MatchString("^\\s+\\w+\\s+\\S+$", lineValue); result {
 			results := optionRegex.FindAllString(lineValue, -1)
+			// Make sure the option name and a value have been set.
+			// This will cause problems if the value would contain whitespaces.
 			if len(results) == 2 {
 				optionName := optionRegexReplace.ReplaceAllString(results[0], "")
 				optionValue := optionRegexReplace.ReplaceAllString(results[1], "")
@@ -66,6 +80,7 @@ func getAllHosts() map[string]*host {
 			}
 		}
 	}
+	// Add the last host to the config.
 	if h != nil {
 		hostList[h.name] = h
 	}

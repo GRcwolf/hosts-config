@@ -81,6 +81,7 @@ func closeFile(file *os.File) {
 	}
 }
 
+// Gets the lines of the config file.
 func getFileContent() (map[int]string, error) {
 	u, err := user.Current()
 	if err != nil {
