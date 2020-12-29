@@ -15,7 +15,7 @@ func clearHostsFromConfig() {
 		log.Fatalf("Couldn't get current user: %s", err.Error())
 		return
 	}
-	filePath := u.HomeDir + "/.ssh/config_test"
+	filePath := u.HomeDir + "/.ssh/config"
 	// Open file in order to later append the host.
 	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR, 0774)
 	if err != nil {
@@ -49,7 +49,7 @@ func writeHostToConfig(h *host) {
 		return
 	}
 	// Open file in order to later append the host.
-	file, err := os.OpenFile(u.HomeDir+"/.ssh/config_test", os.O_APPEND|os.O_WRONLY, 0774)
+	file, err := os.OpenFile(u.HomeDir+"/.ssh/config", os.O_APPEND|os.O_WRONLY, 0774)
 	if err != nil {
 		log.Fatalf("Couldn't open file: %s", err.Error())
 		return
@@ -88,7 +88,7 @@ func getFileContent() (map[int]string, error) {
 		log.Fatalf("Couldn't get current user: %s", err.Error())
 		return nil, err
 	}
-	file, err := os.OpenFile(u.HomeDir+"/.ssh/config_test", os.O_RDONLY, 0774)
+	file, err := os.OpenFile(u.HomeDir+"/.ssh/config", os.O_RDONLY, 0774)
 	if err != nil {
 		log.Fatalf("Couldn't open file: %s", err.Error())
 		return nil, err
