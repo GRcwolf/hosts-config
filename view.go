@@ -7,10 +7,11 @@ func getHostNameFromUser() string {
 	hostName := ""
 	var err error
 	var code int
-	for err != nil ||  hostName == ""  {
+	// Make sure that the hostname is set.
+	for err != nil || hostName == "" {
 		fmt.Println("Enter the HostName:")
 		code, err = fmt.Scanln(&hostName)
-		if err != nil  {
+		if err != nil {
 			fmt.Printf("Got code %d, error %s", code, err)
 		}
 	}
@@ -22,10 +23,11 @@ func getUserFromUser() string {
 	user := ""
 	var err error
 	var code int
-	for err != nil ||  user == ""  {
+	// Make sure the input is valid.
+	for err != nil || user == "" {
 		fmt.Println("Enter the user:")
 		code, err = fmt.Scanln(&user)
-		if err != nil  {
+		if err != nil {
 			fmt.Printf("Got code %d, error %s", code, err)
 		}
 	}
@@ -37,10 +39,11 @@ func getConfigName() string {
 	configName := ""
 	var err error
 	var code int
-	for err != nil ||  configName == ""  {
+	// Make sure the input is valid.
+	for err != nil || configName == "" {
 		fmt.Println("Enter the config name:")
 		code, err = fmt.Scanln(&configName)
-		if err != nil  {
+		if err != nil {
 			fmt.Printf("Got code %d, error %s", code, err)
 		}
 	}
